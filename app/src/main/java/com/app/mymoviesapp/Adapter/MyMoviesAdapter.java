@@ -37,6 +37,11 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
         notifyDataSetChanged();
     }
 
+    public void clearMovies() {
+        movies.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public MyMovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_movies_layout, parent, false);

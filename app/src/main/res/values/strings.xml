@@ -4,4 +4,9 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="upcoming">Upcoming</string>
+
+
+    <string name="sort_popular">Sort By : Popular</string>
+    <string name="sort_top_rated">Sort By : Top Rated</string>
+    <string name="sort_upcoming">Sort By : Upcoming</string>
 </resources>

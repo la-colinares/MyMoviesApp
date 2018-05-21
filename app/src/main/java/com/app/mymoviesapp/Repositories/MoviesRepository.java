@@ -25,6 +25,10 @@ public class MoviesRepository {
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
     private static final String LANGUAGE = "en-US";
 
+    public static final String POPULAR = "popular";
+    public static final String TOP_RATED = "top_rated";
+    public static final String UPCOMING = "upcoming";
+
     private static MoviesRepository repository;
 
     private ITMDbAPI api;
@@ -46,28 +50,42 @@ public class MoviesRepository {
         return repository;
     }
 
-    public void getMovies(int page, final IOnGetMovieCallback callback) {
-        api.getPopularMovies(Constants.MOVIE_DB_API_KEY, LANGUAGE, page)
-                .enqueue( new Callback<MoviesResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<MoviesResponse> call, @NonNull Response<MoviesResponse> response) {
-                        if (response.isSuccessful()) {
-                            MoviesResponse moviesResponse = response.body();
-                            if (moviesResponse != null && moviesResponse.getMovies() != null) {
-                                callback.onSuccess(moviesResponse.getPage(),moviesResponse.getMovies());
-                            } else {
-                                callback.onError();
-                            }
-                        } else {
-                            callback.onError();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MoviesResponse> call, Throwable t) {
+    public void getMovies(int page, String sortBy, final IOnGetMovieCallback callback) {
+        Callback<MoviesResponse> call = new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
+                if (response.isSuccessful()) {
+                    MoviesResponse moviesResponse = response.body();
+                    if (moviesResponse != null && moviesResponse.getMovies() != null) {
+                        callback.onSuccess(moviesResponse.getPage(), moviesResponse.getMovies());
+                    } else {
                         callback.onError();
                     }
-                });
+                } else {
+                    callback.onError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MoviesResponse> call, Throwable t) {
+                callback.onError();
+            }
+        };
+        switch (sortBy) {
+            case TOP_RATED:
+                api.getTopRatedMovies(Constants.MOVIE_DB_API_KEY, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+            case UPCOMING:
+                api.getUpcomingMovies(Constants.MOVIE_DB_API_KEY, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+            case POPULAR:
+            default:
+                api.getPopularMovies(Constants.MOVIE_DB_API_KEY, LANGUAGE, page)
+                        .enqueue(call);
+                break;
+        }
     }
 
     public void getGenres(final IOnGetGenreCallback callback) {

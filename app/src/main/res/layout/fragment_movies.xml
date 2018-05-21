@@ -7,7 +7,7 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
-   <!-- <LinearLayout
+    <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,10 +22,10 @@
             android:drawableRight="@drawable/ic_arrow_drop_down"
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
-            android:text="Sort By : None"
+            android:text="sort text"
             android:gravity="right|center" />
 
-    </LinearLayout>-->
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/movies_recycler_view"
