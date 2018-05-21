@@ -56,4 +56,7 @@ dependencies {
     }
     implementation "com.android.support:support-fragment:27.1.0"
 
+    //Sweet AlertDialog
+    //implementation 'com.github.f0ris.sweetalert:library:1.5.3'
+
 }

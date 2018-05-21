@@ -1,18 +1,26 @@
 package com.app.mymoviesapp.Fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.app.mymoviesapp.Activities.MovieDetailsActivity;
@@ -34,6 +42,7 @@ import java.util.List;
 public class FragMovies extends Fragment {
 
     private View mView;
+    private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView myMoviesList;
     private Button btnSort;
     private MyMoviesAdapter mAdapter;
@@ -52,6 +61,9 @@ public class FragMovies extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_movies, container, false);
 
+        mSwipeRefresh = mView.findViewById(R.id.refresh_movies);
+        mSwipeRefresh.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.GRAY, Color.YELLOW, Color.MAGENTA, Color.CYAN);
+
         myMoviesList = mView.findViewById(R.id.movies_recycler_view);
         btnSort = mView.findViewById(R.id.btn_sort);
         btnSort.setText(getResources().getString(R.string.sort_popular));
@@ -62,14 +74,69 @@ public class FragMovies extends Fragment {
 
         getGenres();
 
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getGenres();
+            }
+        });
+
         btnSort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showSortMenu();
+                //showSortMenu();
+                showSortMenuV2();
             }
         });
 
         return mView;
+    }
+
+    private void showSortMenuV2() {
+
+        final View viewPopup = getLayoutInflater().inflate(R.layout.custom_sort_by, null);
+
+        final Button btnPopular = viewPopup.findViewById(R.id.btn_sort_popular);
+        final Button btnTopRated = viewPopup.findViewById(R.id.btn_sort_top_rated);
+        final Button btnUpcoming = viewPopup.findViewById(R.id.btn_sort_upcoming);
+
+        final PopupWindow popupWindow = new PopupWindow(viewPopup, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        popupWindow.setAnimationStyle(R.style.popup_window_animation_sort);
+        popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.update();
+        popupWindow.showAtLocation(btnSort, Gravity.CENTER, 0, 0);
+
+        btnPopular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnSort.setText(getResources().getString(R.string.sort_popular));
+                sortBy = MoviesRepository.POPULAR;
+                getMovies(currentPage);
+                popupWindow.dismiss();
+
+            }
+        });
+        btnTopRated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnSort.setText(getResources().getString(R.string.sort_top_rated));
+                sortBy = MoviesRepository.TOP_RATED;
+                getMovies(currentPage);
+                popupWindow.dismiss();
+            }
+        });
+        btnUpcoming.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnSort.setText(getResources().getString(R.string.sort_upcoming));
+                sortBy = MoviesRepository.UPCOMING;
+                getMovies(currentPage);
+                popupWindow.dismiss();
+            }
+        });
+
     }
 
     private void showSortMenu() {
@@ -143,17 +210,18 @@ public class FragMovies extends Fragment {
         isFetchingMovies = true;
         moviesRepository.getMovies(page, sortBy, new IOnGetMoviesCallback() {
             @Override
-            public void onSuccess(int page,  List<Movie> movies) {
+            public void onSuccess(int page, List<Movie> movies) {
                 Log.e("MoviesRepository", "Current Page = " + page);
                 if (mAdapter == null) {
                     mAdapter = new MyMoviesAdapter(movies, movieGenres, callback);
                     myMoviesList.setAdapter(mAdapter);
                 } else {
-                    if (page == 1){
+                    if (page == 1) {
                         mAdapter.clearMovies();
                     }
                     mAdapter.appendMovies(movies);
                 }
+                mSwipeRefresh.setRefreshing(false);
                 currentPage = page;
                 isFetchingMovies = false;
             }

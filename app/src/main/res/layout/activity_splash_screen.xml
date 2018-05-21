@@ -10,12 +10,39 @@
     android:orientation="vertical"
     tools:context="com.app.mymoviesapp.SplashScreen.SplashScreen">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/splash_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@mipmap/mma_icon"
+            android:layout_gravity="center"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:progressDrawable="@drawable/bg_progressbar"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center"/>
+
+
+    </FrameLayout>
+    
     <com.hanks.htextview.HTextView
         android:id="@+id/txt_my_movies_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="- My Movies App"
+        android:textStyle="bold"
+        android:text="My Movies App"
         android:textColor="@color/colorWhite"
         android:textSize="30sp"
         htext:animateType="typer"
