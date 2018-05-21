@@ -1,5 +1,6 @@
 package com.app.mymoviesapp.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,9 +15,11 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.app.mymoviesapp.Activities.MovieDetailsActivity;
 import com.app.mymoviesapp.Adapter.MyMoviesAdapter;
-import com.app.mymoviesapp.Interfaces.IOnGetGenreCallback;
-import com.app.mymoviesapp.Interfaces.IOnGetMovieCallback;
+import com.app.mymoviesapp.Interfaces.IOnGetGenresCallback;
+import com.app.mymoviesapp.Interfaces.IOnGetMoviesCallback;
+import com.app.mymoviesapp.Interfaces.OnMoviesClickCallback;
 import com.app.mymoviesapp.Model.Genre;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.R;
@@ -121,21 +124,8 @@ public class FragMovies extends Fragment {
         });
     }
 
-    /*private void getGenres() {
-        moviesRepository.getGenres(new IOnGetGenreCallback() {
-            @Override
-            public void onSuccess(List<Genre> genres) {
-                displayMovies(genres);
-            }
-
-            @Override
-            public void onError() {
-                showError();
-            }
-        });
-    }*/
     private void getGenres() {
-        moviesRepository.getGenres(new IOnGetGenreCallback() {
+        moviesRepository.getGenres(new IOnGetGenresCallback() {
             @Override
             public void onSuccess(List<Genre> genres) {
                 movieGenres = genres;
@@ -151,12 +141,12 @@ public class FragMovies extends Fragment {
 
     private void getMovies(int page) {
         isFetchingMovies = true;
-        moviesRepository.getMovies(page, sortBy, new IOnGetMovieCallback() {
+        moviesRepository.getMovies(page, sortBy, new IOnGetMoviesCallback() {
             @Override
             public void onSuccess(int page,  List<Movie> movies) {
                 Log.e("MoviesRepository", "Current Page = " + page);
                 if (mAdapter == null) {
-                    mAdapter = new MyMoviesAdapter(movies, movieGenres);
+                    mAdapter = new MyMoviesAdapter(movies, movieGenres, callback);
                     myMoviesList.setAdapter(mAdapter);
                 } else {
                     if (page == 1){
@@ -175,21 +165,15 @@ public class FragMovies extends Fragment {
         });
     }
 
-    /*private void displayMovies(final List<Genre> genres) {
-        moviesRepository.getMovies(new IOnGetMovieCallback() {
-            @Override
-            public void onSuccess(List<Movie> movies) {
+    OnMoviesClickCallback callback = new OnMoviesClickCallback() {
+        @Override
+        public void onClick(Movie movie) {
+            Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+            intent.putExtra(MovieDetailsActivity.MOVIE_ID, movie.getId());
+            startActivity(intent);
+        }
+    };
 
-                mAdapter = new MyMoviesAdapter(movies, genres);
-                myMoviesList.setAdapter(mAdapter);
-            }
-
-            @Override
-            public void onError() {
-                showError();
-            }
-        });
-    }*/
 
     private void showError() {
         Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();

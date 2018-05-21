@@ -1,6 +1,6 @@
 package com.app.mymoviesapp.Interfaces;
 
-import com.app.mymoviesapp.Model.Genre;
+import com.app.mymoviesapp.Model.Movie;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import java.util.List;
  * Created by Colinares on 5/19/2018.
  */
 
-public interface IOnGetGenreCallback {
+public interface IOnGetMoviesCallback {
 
-    void onSuccess(List<Genre> genres);
+    void onSuccess(int page,List<Movie> movies);
 
     void onError();
 

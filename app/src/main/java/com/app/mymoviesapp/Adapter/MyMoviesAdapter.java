@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.mymoviesapp.Constants.Constants;
+import com.app.mymoviesapp.Interfaces.OnMoviesClickCallback;
 import com.app.mymoviesapp.Model.Genre;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.R;
@@ -26,10 +27,12 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
 
     private List<Genre> allGenres;
     private List<Movie> movies;
+    private OnMoviesClickCallback callback;
 
-    public MyMoviesAdapter(List<Movie> movies, List<Genre> allGenres) {
+    public MyMoviesAdapter(List<Movie> movies, List<Genre> allGenres, OnMoviesClickCallback callback) {
         this.movies = movies;
         this.allGenres = allGenres;
+        this.callback = callback;
     }
 
     public void appendMovies(List<Movie> moviesToAppend) {
@@ -66,6 +69,7 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
         TextView rating;
         TextView genres;
         ImageView poster;
+        Movie movie;
 
         public MyMovieViewHolder(View itemView) {
             super(itemView);
@@ -75,9 +79,16 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
             rating = itemView.findViewById(R.id.item_movie_rating);
             genres = itemView.findViewById(R.id.item_movie_genre);
             poster = itemView.findViewById(R.id.item_movie_poster);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    callback.onClick(movie);
+                }
+            });
         }
 
         public void bind(Movie movie) {
+            this.movie = movie;
             releaseDate.setText(movie.getReleaseDate().split("-")[0]);
             title.setText(movie.getTitle());
             rating.setText(String.valueOf(movie.getRating()));
