@@ -6,10 +6,12 @@ import com.app.mymoviesapp.Constants.Constants;
 import com.app.mymoviesapp.Interfaces.IOnGetGenresCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetMovieCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetMoviesCallback;
+import com.app.mymoviesapp.Interfaces.IOnGetTrailersCallback;
 import com.app.mymoviesapp.Interfaces.ITMDbAPI;
 import com.app.mymoviesapp.Model.GenresResponse;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.Model.MoviesResponse;
+import com.app.mymoviesapp.Model.TrailerResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -137,6 +139,29 @@ public class MoviesRepository {
                 });
     }
 
+    public void getTrailers(int movieId, final IOnGetTrailersCallback callback) {
+        api.getTrailers(movieId, Constants.MOVIE_DB_API_KEY, LANGUAGE)
+                .enqueue(new Callback<TrailerResponse>() {
+                    @Override
+                    public void onResponse(Call<TrailerResponse> call, Response<TrailerResponse> response) {
+                        if (response.isSuccessful()) {
+                            TrailerResponse trailerResponse = response.body();
+                            if (trailerResponse != null && trailerResponse.getTrailers() != null) {
+                                callback.onSuccess(trailerResponse.getTrailers());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TrailerResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
 
 
 
