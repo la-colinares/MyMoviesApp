@@ -3,6 +3,7 @@ package com.app.mymoviesapp.Interfaces;
 import com.app.mymoviesapp.Model.GenresResponse;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.Model.MoviesResponse;
+import com.app.mymoviesapp.Model.ReviewResponse;
 import com.app.mymoviesapp.Model.TrailerResponse;
 
 import retrofit2.Call;
@@ -53,6 +54,13 @@ public interface ITMDbAPI {
 
     @GET("movie/{movie_id}/videos")
     Call<TrailerResponse> getTrailers(
+            @Path("movie_id") int id,
+            @Query("api_key") String apiKEy,
+            @Query("language") String language
+    );
+
+    @GET("movie/{movie_id}/reviews")
+    Call<ReviewResponse> getReviews(
             @Path("movie_id") int id,
             @Query("api_key") String apiKEy,
             @Query("language") String language

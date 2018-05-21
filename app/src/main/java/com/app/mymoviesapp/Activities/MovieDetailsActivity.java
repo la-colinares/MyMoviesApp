@@ -15,9 +15,11 @@ import android.widget.Toast;
 
 import com.app.mymoviesapp.Interfaces.IOnGetGenresCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetMovieCallback;
+import com.app.mymoviesapp.Interfaces.IOnGetReviewsCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetTrailersCallback;
 import com.app.mymoviesapp.Model.Genre;
 import com.app.mymoviesapp.Model.Movie;
+import com.app.mymoviesapp.Model.Review;
 import com.app.mymoviesapp.Model.Trailer;
 import com.app.mymoviesapp.R;
 import com.app.mymoviesapp.Repositories.MoviesRepository;
@@ -47,7 +49,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private TextView trailersLabel;
     private TextView reviewsLabel;
-
 
     private MoviesRepository moviesRepository;
     private int movieId;
@@ -88,6 +89,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                             .into(movieBackdrop);
                 }
                 getTrailers(movie);
+                getReviews(movie);
             }
 
             @Override
@@ -147,6 +149,29 @@ public class MovieDetailsActivity extends AppCompatActivity {
             public void onError() {
                 // Do nothing
                 trailersLabel.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getReviews(Movie movie) {
+        moviesRepository.getReviews(movie.getId(), new IOnGetReviewsCallback() {
+            @Override
+            public void onSuccess(List<Review> reviews) {
+                reviewsLabel.setVisibility(View.VISIBLE);
+                movieReviews.removeAllViews();
+                for (Review review : reviews) {
+                    View parent = getLayoutInflater().inflate(R.layout.custom_reviews, movieReviews, false);
+                    TextView author = parent.findViewById(R.id.reviewAuthor);
+                    TextView content = parent.findViewById(R.id.reviewContent);
+                    author.setText(review.getAuthor());
+                    content.setText(review.getContent());
+                    movieReviews.addView(parent);
+                }
+            }
+
+            @Override
+            public void onError() {
+                // Do nothing
             }
         });
     }

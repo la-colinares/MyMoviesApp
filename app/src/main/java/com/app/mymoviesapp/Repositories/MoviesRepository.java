@@ -6,11 +6,13 @@ import com.app.mymoviesapp.Constants.Constants;
 import com.app.mymoviesapp.Interfaces.IOnGetGenresCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetMovieCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetMoviesCallback;
+import com.app.mymoviesapp.Interfaces.IOnGetReviewsCallback;
 import com.app.mymoviesapp.Interfaces.IOnGetTrailersCallback;
 import com.app.mymoviesapp.Interfaces.ITMDbAPI;
 import com.app.mymoviesapp.Model.GenresResponse;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.Model.MoviesResponse;
+import com.app.mymoviesapp.Model.ReviewResponse;
 import com.app.mymoviesapp.Model.TrailerResponse;
 
 import retrofit2.Call;
@@ -163,6 +165,29 @@ public class MoviesRepository {
                 });
     }
 
+    public void getReviews(int movieId, final IOnGetReviewsCallback callback) {
+        api.getReviews(movieId, Constants.MOVIE_DB_API_KEY, LANGUAGE)
+                .enqueue(new Callback<ReviewResponse>() {
+                    @Override
+                    public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+                        if (response.isSuccessful()) {
+                            ReviewResponse reviewResponse = response.body();
+                            if (reviewResponse != null && reviewResponse.getReviews() != null) {
+                                callback.onSuccess(reviewResponse.getReviews());
+                            } else {
+                                callback.onError();
+                            }
+                        } else {
+                            callback.onError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ReviewResponse> call, Throwable t) {
+                        callback.onError();
+                    }
+                });
+    }
 
 
 }
