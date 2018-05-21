@@ -36,7 +36,7 @@ public class FragMovies extends Fragment {
     private List<Genre> movieGenres;
 
     private boolean isFetchingMovies;
-    private int currentPage = 0;
+    private int currentPage = 1;
 
     @Nullable
     @Override
@@ -60,6 +60,7 @@ public class FragMovies extends Fragment {
         myMoviesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
                 int totalItemCount = manager.getItemCount();
                 int visibleItemCount = manager.getChildCount();
                 int firstVisibleItem = manager.findFirstVisibleItemPosition();
