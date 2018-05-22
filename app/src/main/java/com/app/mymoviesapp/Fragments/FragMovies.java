@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
@@ -42,6 +43,7 @@ import java.util.List;
 public class FragMovies extends Fragment {
 
     private View mView;
+    private LinearLayout noInternetLayout;
     private SwipeRefreshLayout mSwipeRefresh;
     private RecyclerView myMoviesList;
     private Button btnSort;
@@ -60,6 +62,8 @@ public class FragMovies extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_movies, container, false);
+
+        noInternetLayout = mView.findViewById(R.id.no_internet_layout);
 
         mSwipeRefresh = mView.findViewById(R.id.refresh_movies);
         mSwipeRefresh.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.GRAY, Color.YELLOW, Color.MAGENTA, Color.CYAN);
@@ -139,38 +143,6 @@ public class FragMovies extends Fragment {
 
     }
 
-    private void showSortMenu() {
-        PopupMenu sortMenu = new PopupMenu(getActivity(), mView.findViewById(R.id.btn_sort));
-        sortMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                currentPage = 1;
-                switch (item.getItemId()) {
-                    case R.id.popular:
-                        btnSort.setText(getResources().getString(R.string.sort_popular));
-                        sortBy = MoviesRepository.POPULAR;
-                        getMovies(currentPage);
-                        return true;
-                    case R.id.top_rated:
-                        btnSort.setText(getResources().getString(R.string.sort_top_rated));
-                        sortBy = MoviesRepository.TOP_RATED;
-                        getMovies(currentPage);
-                        return true;
-                    case R.id.upcoming:
-                        btnSort.setText(getResources().getString(R.string.sort_upcoming));
-                        sortBy = MoviesRepository.UPCOMING;
-                        getMovies(currentPage);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        });
-
-        sortMenu.inflate(R.menu.sort_menu);
-        sortMenu.show();
-    }
-
     private void setupOnScrollListener() {
         final LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         myMoviesList.setLayoutManager(manager);
@@ -197,11 +169,14 @@ public class FragMovies extends Fragment {
             public void onSuccess(List<Genre> genres) {
                 movieGenres = genres;
                 getMovies(currentPage);
+                hideNoInternet();
             }
 
             @Override
             public void onError() {
-                showError();
+                //showError();
+                showNoInternet();
+                mSwipeRefresh.setRefreshing(false);
             }
         });
     }
@@ -224,11 +199,14 @@ public class FragMovies extends Fragment {
                 mSwipeRefresh.setRefreshing(false);
                 currentPage = page;
                 isFetchingMovies = false;
+                hideNoInternet();
             }
 
             @Override
             public void onError() {
-                showError();
+                showNoInternet();
+                //noInternetLayout.setVisibility(View.VISIBLE);
+                //showError();
             }
         });
     }
@@ -247,5 +225,14 @@ public class FragMovies extends Fragment {
         Toast.makeText(getActivity(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
     }
 
+    private void showNoInternet(){
+        noInternetLayout.setVisibility(View.VISIBLE);
+        myMoviesList.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideNoInternet(){
+        noInternetLayout.setVisibility(View.INVISIBLE);
+        myMoviesList.setVisibility(View.VISIBLE);
+    }
 
 }
