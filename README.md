@@ -14,7 +14,7 @@
 # Made With:
 	- Java, Retrofit2, Glide, Material Design UI
 	
-# Some Libray Used:
+# Some Library Used:
 	- HTextView -> https://github.com/hanks-zyh/HTextView
 	- Reside Menu -> https://github.com/SpecialCyCi/AndroidResideMenu
 	
