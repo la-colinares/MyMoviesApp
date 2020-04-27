@@ -2,10 +2,12 @@ package com.app.mymoviesapp.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,9 +35,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     public static String MOVIE_ID = "movie_id";
 
-    private static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w780";
+    private static String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w780";
     private static String YOUTUBE_VIDEO_URL = "http://www.youtube.com/watch?v=%s";
-    private static String YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/%s/0.jpg";
+    private static String YOUTUBE_THUMBNAIL_URL = "https://img.youtube.com/vi/%s/0.jpg";
 
     private ImageView movieBackdrop;
     private TextView movieTitle;
@@ -53,22 +55,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private MoviesRepository moviesRepository;
     private int movieId;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
         movieId = getIntent().getIntExtra(MOVIE_ID, movieId);
-
         moviesRepository = MoviesRepository.getInstance();
 
         setupToolbar();
-
         initUI();
-
         getMovie();
-
     }
 
     private void getMovie() {
@@ -85,7 +82,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 if (!isFinishing()) {
                     Glide.with(MovieDetailsActivity.this)
                             .load(IMAGE_BASE_URL + movie.getBackdrop())
-                            .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
                             .into(movieBackdrop);
                 }
                 getTrailers(movie);
@@ -129,18 +125,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     View parent = getLayoutInflater().inflate(R.layout.custom_trailer_thumbnail, movieTrailers, false);
                     ImageView thumbnail = parent.findViewById(R.id.thumbnail);
                     thumbnail.requestLayout();
-                    thumbnail.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showTrailer(String.format(YOUTUBE_VIDEO_URL, trailer.getKey()));
-                        }
-                    });
+                    thumbnail.setOnClickListener(v -> showTrailer(String.format(YOUTUBE_VIDEO_URL, trailer.getKey())));
                     if (!isFinishing()) {
+                        String thumbnail_url = String.format(YOUTUBE_THUMBNAIL_URL, trailer.getKey());
+                        Log.e(MovieDetailsActivity.class.getSimpleName(), "onSuccess: " + thumbnail_url );
                         Glide.with(MovieDetailsActivity.this)
-                                .load(String.format(YOUTUBE_THUMBNAIL_URL, trailer.getKey()))
-                                .apply(RequestOptions.placeholderOf(R.color.colorPrimary).centerCrop())
+                                .load(thumbnail_url)
                                 .into(thumbnail);
                     }
+
                     movieTrailers.addView(parent);
                 }
             }

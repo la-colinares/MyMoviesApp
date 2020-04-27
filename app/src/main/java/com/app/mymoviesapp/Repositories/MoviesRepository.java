@@ -1,6 +1,6 @@
 package com.app.mymoviesapp.Repositories;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.app.mymoviesapp.Constants.Constants;
 import com.app.mymoviesapp.Interfaces.IOnGetGenresCallback;

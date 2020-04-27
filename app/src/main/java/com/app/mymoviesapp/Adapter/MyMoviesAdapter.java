@@ -1,6 +1,9 @@
 package com.app.mymoviesapp.Adapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import com.app.mymoviesapp.Model.Genre;
 import com.app.mymoviesapp.Model.Movie;
 import com.app.mymoviesapp.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
@@ -45,6 +49,7 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
         notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
     public MyMovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_movies_layout, parent, false);
@@ -79,12 +84,7 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
             rating = itemView.findViewById(R.id.item_movie_rating);
             genres = itemView.findViewById(R.id.item_movie_genre);
             poster = itemView.findViewById(R.id.item_movie_poster);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    callback.onClick(movie);
-                }
-            });
+            itemView.setOnClickListener(view -> callback.onClick(movie));
         }
 
         public void bind(Movie movie) {
@@ -93,9 +93,9 @@ public class MyMoviesAdapter extends RecyclerView.Adapter<MyMoviesAdapter.MyMovi
             title.setText(movie.getTitle());
             rating.setText(String.valueOf(movie.getRating()));
             genres.setText(getGenres(movie.getGenreIds()));
+
             Glide.with(itemView)
                     .load(Constants.IMAGE_BASE_URL + movie.getPosterPath())
-                    .apply(RequestOptions.placeholderOf(R.color.colorPrimary))
                     .into(poster);
         }
 
